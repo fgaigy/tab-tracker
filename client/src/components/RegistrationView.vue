@@ -1,5 +1,5 @@
 <script setup>
-import Auth from '@/services/AuthentificationService.js'
+import AuthenticationService from '@/services/AuthenticationService.js'
 </script>
 
 <template>
@@ -11,7 +11,7 @@ import Auth from '@/services/AuthentificationService.js'
 
   <label for="password">Password</label>
   <input type="password" name="password" id="password" v-model="password">
-
+  <div class="error" v-html="error" />
   <button @click="register">Register</button>
 </div>
 
@@ -66,6 +66,12 @@ import Auth from '@/services/AuthentificationService.js'
 .form-container button:hover {
   background-color: #4338ca;
 }
+
+.error {
+  color: red;
+  font-size: small;
+  text-align: center;
+}
 </style>
 
 <script>
@@ -73,16 +79,20 @@ export default {
   data() {
     return {
       email: '',
-      password: ''
+      password: '',
+      error: null
     }
   },
   methods: {
     async register() {
-      const res = await Auth.register({
+      try {
+        await AuthenticationService.register({
         email: this.email,
         password: this.password
       })
-      console.log(res.data)
+      } catch (error) {
+        this.error = error.response.data.error
+      }
     }
   }
 }
